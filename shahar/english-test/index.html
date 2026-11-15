@@ -62,6 +62,7 @@ tr.tap{cursor:pointer}
 </head>
 <body>
 <div id="app"></div>
+<script src="../../assets/report.js"></script>
 <script>
 // ---------- DATA ----------
 const GROUPS=[
@@ -712,6 +713,13 @@ function finish(){
  const first=S.total-S.wrong.size;
  logSession(true);
  const again=S.items, wrongItems=S.items.filter(i=>S.wrong.has(key(i))), title=S.title, back=S.back, keep=S.keepOrder;
+ try{
+  const mins=Math.max(1,Math.round((Date.now()-S.t0)/60000)), pct=Math.round(first/S.total*100);
+  const status=pct>=90?"מצוין":pct>=75?"טוב מאוד":pct>=55?"בסדר – כדאי לחזור על הטעויות":"צריך עוד תרגול";
+  if(window.SchoolReport) SchoolReport.send({practice:"מתכוננים למבחן באנגלית – "+title,score:first,max:S.total,status:status+" (נכון בפעם הראשונה)",
+   lines:wrongItems.length?["טעויות:"].concat(wrongItems.map(i=>"❌ "+label(i))):["✅ הכל נכון בפעם הראשונה"],
+   extra:`זמן: כ-${mins} דקות · ניסיונות: ${S.tries}`});
+ }catch(e){}
  app.innerHTML=`${topBar(title)}
  <h1 style="text-align:center">סיימת! 🎉</h1>
  <div class="score">${first} / ${S.total}</div>

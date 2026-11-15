@@ -1,7 +1,7 @@
 // Sends a practice result by email through Web3Forms (https://web3forms.com).
 // The access key is public by design: it only lets this site send mail TO the owner's address.
 window.SchoolReport = (function () {
-  const ACCESS_KEY = "PASTE_WEB3FORMS_KEY_HERE";
+  const ACCESS_KEY = "7faf30fc-23cb-44cb-b3a9-dc0369047e12";
   const KIDS = { noga: "נגה", shahar: "שחר", alon: "אלון", yuval: "יובל" };
 
   function student() {
