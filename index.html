@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>School – תרגולים</title>
+<title>תרגולים</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   body{margin:0;font-family:'Rubik',system-ui,sans-serif;background:#fbf5ea;color:#1d2a33}
@@ -14,17 +14,27 @@
   main{padding:24px 20px 60px}
   h2{font-size:15px;letter-spacing:.05em;color:#0b6e8a;margin:24px 0 10px}
   a.card{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #e6dccb;border-radius:16px;padding:16px 18px;margin-bottom:10px;text-decoration:none;color:inherit;transition:transform .15s, box-shadow .15s}
-  a.card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(11,110,138,.12)}
-  .ico{font-size:28px}
+  a.card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+  .ico{font-size:30px}
   .t{font-weight:800}
   .d{color:#5e6d77;font-size:15px}
+  .empty{background:#fff;border:2px dashed #e6dccb;border-radius:16px;padding:28px;text-align:center;color:#5e6d77}
+  .back{display:inline-block;margin-top:24px;color:#0b6e8a;font-weight:600;text-decoration:none}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-top:8px}
+  .kid{flex-direction:column;justify-content:center;text-align:center;padding:26px 14px;border-top:6px solid var(--k)}
+  .kid .ico{font-size:44px}
+  .kid .t{font-size:22px}
 </style>
 </head>
 <body>
-<header><div class="wrap"><h1>📚 התרגולים שלי</h1><p>בחרי תרגול כדי להתחיל</p></div></header>
+<header><div class="wrap"><h1>📚 תרגולים</h1><p>של מי התרגולים?</p></div></header>
 <main class="wrap">
-  <h2>אנגלית</h2>
-  <a class="card" href="beach/"><span class="ico">🌊</span><span><div class="t">Unseen: The Girl Who Cleaned the Beach</div><div class="d">קטע קריאה ו-14 שאלות · רמה A2</div></span></a>
+  <div class="grid">
+    <a class="card kid" href="noga/" style="--k:#0b6e8a"><span class="ico">🌸</span><span class="t">נגה</span></a>
+    <a class="card kid" href="shahar/" style="--k:#b45309"><span class="ico">🌅</span><span class="t">שחר</span></a>
+    <a class="card kid" href="alon/" style="--k:#2f6b3a"><span class="ico">🌳</span><span class="t">אלון</span></a>
+    <a class="card kid" href="yuval/" style="--k:#6b3fa0"><span class="ico">🎵</span><span class="t">יובל</span></a>
+  </div>
 </main>
 </body>
 </html>
