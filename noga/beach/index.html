@@ -109,6 +109,7 @@
   <section class="qcol" id="qcol" aria-label="Questions"></section>
 </main>
 
+<script src="../../assets/report.js"></script>
 <script>
 const PARAS = [
   "Lily Evans is fourteen years old and lives in a small town near the sea in Wales. Every summer, she spends a lot of time on the beach with her friends. Last year, something made her very sad. She saw plastic bottles, bags and old fishing nets everywhere on the sand.",
@@ -185,6 +186,7 @@ const QS = [
 ];
 
 const state = {}; // id -> {val, earned, checked}
+const T0 = Date.now(); const hintsUsed = new Set(); let lastSentSig = null, attempt = 0;
 QS.forEach(q=>state[q.id]={val:q.type==="two"?["",""]:(q.type==="tf"?{tf:null,proof:""}:null),earned:0,checked:false});
 
 try{const saved=JSON.parse(localStorage.getItem("unseen-beach")||"null"); if(saved) Object.assign(state,saved);}catch(e){}
@@ -287,7 +289,7 @@ function check(id,silent){
 function showAns(id){const q=QS.find(x=>x.id===id),fb=document.getElementById("fb"+id);fb.className="fb show info";fb.innerHTML="<b>Answer:</b> "+q.explain+(q.type==="tf"?`<br><b>Proof:</b> “${q.proofs[q.proofAns]}”`:"");}
 
 function hint(id){
-  const q=QS.find(x=>x.id===id),h=document.getElementById("h"+id);
+  const q=QS.find(x=>x.id===id),h=document.getElementById("h"+id); hintsUsed.add(id);
   h.className="hintbox show"; h.innerHTML="💡 "+q.hint;
   document.querySelectorAll(".para").forEach(p=>p.classList.remove("hl"));
   const p=document.getElementById("p"+q.para); p.classList.add("hl");
@@ -309,6 +311,34 @@ function checkAll(){
   const msg= total>=90?"Amazing! You're ready for the test! 🌟":total>=75?"Very good! Look again at the red questions. 👍":total>=55?"Good effort! Use the hints and try the red ones again. 💪":"Keep going! Read the text again slowly and use the hints. 📖";
   document.getElementById("final").innerHTML=`<div class="final"><div class="big">${total}</div><div>out of 100</div><div class="msg">${msg}</div>${empty?`<div style="color:var(--bad);font-weight:700">${empty} question${empty>1?"s are":" is"} still empty.</div>`:""}</div>`;
   document.getElementById("final").scrollIntoView({behavior:"smooth",block:"center"});
+  sendReport(total, empty);
+}
+
+function describe(q){
+  const v=state[q.id].val;
+  if(q.type==="mc") return v===null?"—":"abcd"[v]+". "+q.opts[v];
+  if(q.type==="tf") return (v.tf===null?"—":(v.tf?"T":"F"))+(v.proof!==""?" | הוכחה: "+q.proofs[+v.proof]:" | בלי הוכחה");
+  if(q.type==="two") return v.filter(Boolean).join(" ; ")||"—";
+  return (v||"").trim()||"—";
+}
+
+async function sendReport(total, empty){
+  const sig=JSON.stringify(QS.map(q=>state[q.id].val));
+  if(sig===lastSentSig) return;
+  lastSentSig=sig; attempt++;
+  const lines=QS.map(q=>{
+    const g=grade(q), mark=g===null?"⬜ ריק":(g===q.pts?"✅":(g>0?"🟡":"❌"));
+    return `${q.id}. ${mark} (${g===null?0:g}/${q.pts})  תשובה: ${describe(q)}${hintsUsed.has(q.id)?"  💡רמז":""}`;
+  });
+  const mins=Math.max(1,Math.round((Date.now()-T0)/60000));
+  const status = empty>0 ? `סיים/ה עם ${empty} שאלות ריקות` : (total>=90?"מצוין – מוכנ/ה למבחן":total>=75?"טוב מאוד":total>=55?"בסדר – כדאי לחזור על השאלות השגויות":"צריך עוד תרגול");
+  const box=document.getElementById("final").querySelector(".final");
+  const note=document.createElement("div"); note.style.cssText="margin-top:10px;font-size:14px;color:#5e6d77"; note.textContent="✉️ Sending your result…"; box&&box.appendChild(note);
+  const r = window.SchoolReport ? await SchoolReport.send({
+    practice:"Unseen: The Girl Who Cleaned the Beach", score:total, max:100, status, lines,
+    extra:`ניסיון מספר: ${attempt} · זמן: כ-${mins} דקות · רמזים: ${hintsUsed.size}`
+  }) : {ok:false};
+  note.textContent = r.ok ? "✉️ Your result was sent to Mom." : (r.skipped ? "" : "✉️ Couldn't send the result (no internet?).");
 }
 
 function resetAll(){
